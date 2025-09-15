@@ -51,6 +51,6 @@ class InitialFeatureExtractor(nn.Module):
         aggregated_feature = max_pool_f_ck + avgpool_f_ck  # (B, N, k*D)
 
         aggregated_feature_perm = aggregated_feature.permute(0, 2, 1)  # (B, k*D, N)
-        updated_feature = self.cbr(aggregated_feature_perm)  # (B, k*D, N)
+        updated_feature = self.cbr(aggregated_feature_perm)  # (B, out_channel, N)
         
-        return updated_feature.permute(0, 2, 1)  # (B, N, k*D)
+        return updated_feature.permute(0, 2, 1)  # (B, N, out_channel)

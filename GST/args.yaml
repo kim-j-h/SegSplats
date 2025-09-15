@@ -1,0 +1,52 @@
+# ---------------------------------------------------------------------------
+# Gaussian Splatting Transformer 모델 및 훈련 파이프라인 설정 파일 예시
+# ---------------------------------------------------------------------------
+
+# 데이터 경로 설정
+# source_path: COLMAP 또는 NeRF 형식의 입력 데이터셋 경로
+# model_path: 훈련된 모델과 체크포인트가 저장될 출력 경로
+data_params:
+  source_path: "data/nerf_synthetic/lego"
+  model_path: "output/lego_gst"
+
+# 모델 아키텍처 파라미터
+# 이 섹션은 GaussianTransformer와 skip_decoder의 구조를 정의합니다.
+model_params:
+  # feature_dim: 모델 전체에서 사용될 기본 특징(feature) 벡터의 차원 (코드의 'D')
+  feature_dim: 128
+  
+  # part_level: Skip Feature Decoder에서 사용할 파트 레벨
+  # (모델이 얼마나 세분화된 부분으로 특징을 나눌지 결정)
+  part_level: 4
+
+# 파이프라인 관련 파라미터
+# 이 섹션은 모델의 특정 모듈에 대한 세부 설정을 포함합니다.
+pipeline_params:
+  # k: InitialFeatureExtractor에서 사용하는 이웃의 수
+  k: 4
+  
+  # xyz_embedding_dim: 위치(xyz) 정보를 임베딩할 때 사용할 차원
+  xyz_embedding_dim: 8
+  
+  # alpha: InitialFeatureExtractor의 위치 인코딩에서 사용되는 스케일링 팩터
+  alpha: 1000
+
+# 훈련(Training) 관련 파라미터
+# 이 섹션은 옵티마이저, 학습률, 에포크 등 훈련 과정을 제어합니다.
+training_params:
+  # num_epochs: 전체 데이터셋을 반복하여 훈련할 횟수
+  num_epochs: 100
+  
+  # learning_rate: Adam 옵티마이저의 학습률
+  learning_rate: 0.001
+  
+  # weight_decay: 가중치 감쇠(L2 정규화) 값으로, 모델의 과적합을 방지
+  weight_decay: 1.0e-5
+
+# 훈련 재개 및 저장 설정
+checkpoint_params:
+  # start_checkpoint: 훈련을 재개할 체크포인트 파일 경로 (비워두면 처음부터 시작)
+  start_checkpoint: ""
+  
+  # save_iterations: 모델을 저장할 특정 반복(iteration) 시점들 (쉼표로 구분)
+  save_iterations: "10000, 20000, 30000"

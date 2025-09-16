@@ -50,3 +50,10 @@ checkpoint_params:
   
   # save_iterations: 모델을 저장할 특정 반복(iteration) 시점들 (쉼표로 구분)
   save_iterations: "10000, 20000, 30000"
+
+scene:
+
+opt:
+
+dataset:
+  feature_type: "clip_part"

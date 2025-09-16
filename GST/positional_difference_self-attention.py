@@ -15,13 +15,13 @@ class positional_difference_self_attention(nn.Module):
             nn.BatchNorm1d(D),
             nn.ReLU(inplace=True)
         )
-        
+        self.D = D
     def forward (self, f_in):
         ### f_in: (B, N, D)
         Q, K, V = self.W_q(f_in), self.W_k(f_in), self.W_v(f_in)  # (B, N, D)
         if self.subtract_similarity:
             A = torch.softmax(Q - K)  # (B, N, N)
         else:
-            A = torch.softmax(torch.matmul(Q, K.transpose(-2, -1)) / (D ** 0.5), dim=-1)  # (B, N, N)
+            A = torch.softmax(torch.matmul(Q, K.transpose(-2, -1)) / (self.D ** 0.5), dim=-1)  # (B, N, N)
         f_sa = A * V  # (B, N, D)
         return f_in + self.cbr((f_in - f_sa).permute(0, 2, 1)).permute(0, 2, 1)  # (B, N, D)

@@ -129,7 +129,7 @@ def main(dataset : ModelParams, iteration : int, opt) -> None:
         my_feat_decoder.eval()
         clip_segmeter = featsplat_editor.clip_segmenter(gaussians, my_feat_decoder)
 
-    with server.add_gui_folder("Virtual Franka") as folder:
+    # with server.add_gui_folder("Virtual Franka") as folder:
         # add arm model
        # urdf = ViserUrdf(server, urdf_path = Path("./urdf/panda_newgripper.urdf"), root_node_name = "/panda_base")
 
@@ -187,7 +187,7 @@ def main(dataset : ModelParams, iteration : int, opt) -> None:
         # Create grasp button.
         # arm_grasp_button = server.add_gui_button("Grasp")
 
-        @arm_grasp_button.on_click
+        # @arm_grasp_button.on_click
         # def _(_) -> None:
         #     # calculate IK
         #     # robot = rtb.models.Panda()
@@ -559,51 +559,51 @@ def main(dataset : ModelParams, iteration : int, opt) -> None:
             # generate local grasps
             # pose_matrices, scores = grasping_utils.sample_grasps(saved_path, if_global=False)
 
-            print("Object grasps generated")
+            # print("Object grasps generated")
 
-            nonlocal local_object_grasp_poses, local_object_grasp_poses_visual, local_object_grasp_scores
+            # nonlocal local_object_grasp_poses, local_object_grasp_poses_visual, local_object_grasp_scores
 
-            # Print the parsed data and corresponding pose matrices
-            for i, (score, pose) in enumerate(zip(scores, pose_matrices)):
+            # # Print the parsed data and corresponding pose matrices
+            # for i, (score, pose) in enumerate(zip(scores, pose_matrices)):
 
-                # make the rotation easier fot the last joint(can be deleted, the pose would be strange)
-                Ry = SO3.Ry(np.pi/2).data[0]
-                grasp_pose = pose.copy()
-                grasp_pose[:3, :3] = pose[:3, :3] @ Ry
-                x_axis_vector = grasp_pose[:3, 0]
-                world_x_axis = np.array([1, 0, 0])
-                dot_product = np.dot(x_axis_vector, world_x_axis)
-                # If the dot product is negative, the gripper is pointing in the opposite direction
-                if dot_product < 0:
-                    Rz = SO3.Rz(np.pi).data[0]
-                    grasp_pose[:3, :3] = grasp_pose[:3, :3] @ Rz
+            #     # make the rotation easier fot the last joint(can be deleted, the pose would be strange)
+            #     Ry = SO3.Ry(np.pi/2).data[0]
+            #     grasp_pose = pose.copy()
+            #     grasp_pose[:3, :3] = pose[:3, :3] @ Ry
+            #     x_axis_vector = grasp_pose[:3, 0]
+            #     world_x_axis = np.array([1, 0, 0])
+            #     dot_product = np.dot(x_axis_vector, world_x_axis)
+            #     # If the dot product is negative, the gripper is pointing in the opposite direction
+            #     if dot_product < 0:
+            #         Rz = SO3.Rz(np.pi).data[0]
+            #         grasp_pose[:3, :3] = grasp_pose[:3, :3] @ Rz
 
-                # hardcode for better grasping(collision avoidance for tabletop)
-                z_axis_vector = -grasp_pose[:3, 2]
-                world_z_axis = np.array([0, 0, 1])
-                z_vector_norm = np.linalg.norm(z_axis_vector)
-                world_z_vector_norm = np.linalg.norm(world_z_axis)
-                dot_product = np.dot(z_axis_vector, world_z_axis)
-                angle = np.arccos(dot_product / (z_vector_norm * world_z_vector_norm))
-                if angle > np.pi / 4:
-                    continue
+            #     # hardcode for better grasping(collision avoidance for tabletop)
+            #     z_axis_vector = -grasp_pose[:3, 2]
+            #     world_z_axis = np.array([0, 0, 1])
+            #     z_vector_norm = np.linalg.norm(z_axis_vector)
+            #     world_z_vector_norm = np.linalg.norm(world_z_axis)
+            #     dot_product = np.dot(z_axis_vector, world_z_axis)
+            #     angle = np.arccos(dot_product / (z_vector_norm * world_z_vector_norm))
+            #     if angle > np.pi / 4:
+            #         continue
 
-                rotation_matrix = grasp_pose[:3, :3]
-                translation = pose[:3, 3]
+            #     rotation_matrix = grasp_pose[:3, :3]
+            #     translation = pose[:3, 3]
 
-                rotation_matrix_vis = pose[:3, :3]
-                translation_vis = pose[:3, 3]
+            #     rotation_matrix_vis = pose[:3, :3]
+            #     translation_vis = pose[:3, 3]
 
-                translation_nearer = translation + 0.05 * rotation_matrix[:, 2] # move the grasp closer to the object
+            #     translation_nearer = translation + 0.05 * rotation_matrix[:, 2] # move the grasp closer to the object
 
-                # calculate the minimum distance between the grasp and the object
-                min_distance = np.min(np.linalg.norm(np.asarray(pcd_gaussians_selected.points) - translation_nearer, axis=1))
+            #     # calculate the minimum distance between the grasp and the object
+            #     min_distance = np.min(np.linalg.norm(np.asarray(pcd_gaussians_selected.points) - translation_nearer, axis=1))
                 
-                print("min_distance", min_distance)
-                if min_distance < 0.02:
-                    local_object_grasp_poses_visual.append(pose.copy())
-                    local_object_grasp_poses.append(grasp_pose)
-                    local_object_grasp_scores.append(score)
+            #     print("min_distance", min_distance)
+            #     if min_distance < 0.02:
+            #         local_object_grasp_poses_visual.append(pose.copy())
+            #         local_object_grasp_poses.append(grasp_pose)
+            #         local_object_grasp_scores.append(score)
 
             # # only keep 20 highest scores
             # if len(local_object_grasp_poses) > 20:
@@ -613,85 +613,85 @@ def main(dataset : ModelParams, iteration : int, opt) -> None:
             #     local_object_grasp_scores = [local_object_grasp_scores[i] for i in idx]
 
             # normalize the scores
-            print("{} grasps generated".format(len(local_object_grasp_poses)))
+        #     print("{} grasps generated".format(len(local_object_grasp_poses)))
 
-            local_object_grasp_scores_visual = np.array(local_object_grasp_scores)
-            local_object_grasp_scores_visual = (local_object_grasp_scores_visual - np.min(local_object_grasp_scores_visual)) / (np.max(local_object_grasp_scores_visual) - np.min(local_object_grasp_scores_visual))
+        #     local_object_grasp_scores_visual = np.array(local_object_grasp_scores)
+        #     local_object_grasp_scores_visual = (local_object_grasp_scores_visual - np.min(local_object_grasp_scores_visual)) / (np.max(local_object_grasp_scores_visual) - np.min(local_object_grasp_scores_visual))
 
-            for ind, pose in enumerate(local_object_grasp_poses_visual):
+        #     for ind, pose in enumerate(local_object_grasp_poses_visual):
 
-                grasp = local_object_grasp_poses_visual[ind]
-                rotation_matrix = grasp[:3, :3]
-                translation = grasp[:3, 3]
+        #         grasp = local_object_grasp_poses_visual[ind]
+        #         rotation_matrix = grasp[:3, :3]
+        #         translation = grasp[:3, 3]
 
-                frame_handle = server.add_frame(
-                    name=f'/grasps_{ind}',
-                    wxyz=tf.SO3.from_matrix(rotation_matrix).wxyz,
-                    position=translation,
-                    show_axes=False
-                )
-                grasp_handle = server.add_mesh(
-                    name=f'/grasps_{ind}/mesh',
-                    vertices=np.asarray(default_grasp.vertices),
-                    faces=np.asarray(default_grasp.triangles),
-                    # color=np.array([1.0, 0.0, 0.0]),
-                    color = np.array([local_object_grasp_scores_visual[ind], 0.0, 1.0 - local_object_grasp_scores_visual[ind]]),
-                )
+        #         frame_handle = server.add_frame(
+        #             name=f'/grasps_{ind}',
+        #             wxyz=tf.SO3.from_matrix(rotation_matrix).wxyz,
+        #             position=translation,
+        #             show_axes=False
+        #         )
+        #         grasp_handle = server.add_mesh(
+        #             name=f'/grasps_{ind}/mesh',
+        #             vertices=np.asarray(default_grasp.vertices),
+        #             faces=np.asarray(default_grasp.triangles),
+        #             # color=np.array([1.0, 0.0, 0.0]),
+        #             color = np.array([local_object_grasp_scores_visual[ind], 0.0, 1.0 - local_object_grasp_scores_visual[ind]]),
+        #         )
         
-        # Choose with score
-        select_local_grasp_score_button = server.add_gui_button("Grasp with score")
+        # # Choose with score
+        # select_local_grasp_score_button = server.add_gui_button("Grasp with score")
 
-        @select_local_grasp_score_button.on_click
-        def _(_) -> None:
-            if len(local_object_grasp_poses) == 0:
-                print("Please filter grasps first")
-                return
+        # @select_local_grasp_score_button.on_click
+        # def _(_) -> None:
+        #     if len(local_object_grasp_poses) == 0:
+        #         print("Please filter grasps first")
+        #         return
             
-            # select the grasp with the highest score
-            max_score = np.max(local_object_grasp_scores)
-            grasp_number = local_object_grasp_scores.index(max_score)
-            grasp = local_object_grasp_poses[grasp_number]
-            print(f"Grasp {grasp_number} selected")
+        #     # select the grasp with the highest score
+        #     max_score = np.max(local_object_grasp_scores)
+        #     grasp_number = local_object_grasp_scores.index(max_score)
+        #     grasp = local_object_grasp_poses[grasp_number]
+        #     print(f"Grasp {grasp_number} selected")
 
-            roll, pitch, yaw = euler.mat2euler(grasp[:3, :3])
-            Tep = SE3.Trans(grasp[:3, 3]) * SE3.RPY([roll, pitch, yaw])
+        #     roll, pitch, yaw = euler.mat2euler(grasp[:3, :3])
+        #     Tep = SE3.Trans(grasp[:3, 3]) * SE3.RPY([roll, pitch, yaw])
 
-            sol, success, iterations, searches, residual = virtual_robot.ik_NR(Tep)
+        #     sol, success, iterations, searches, residual = virtual_robot.ik_NR(Tep)
 
-            if not success:
-                print("No solution found")
-                return
+        #     if not success:
+        #         print("No solution found")
+        #         return
             
-            print("Tep", Tep)
-            print("joint angles", sol)
+        #     print("Tep", Tep)
+        #     print("joint angles", sol)
 
-            for i, angle in enumerate(sol):
-                gui_joints[i].value = angle
+        #     for i, angle in enumerate(sol):
+        #         gui_joints[i].value = angle
         
-           #  plan_utils.grasp_object(grasp)
+        #    #  plan_utils.grasp_object(grasp)
 
-        # Clear local grasps
-        clear_local_grasp_button = server.add_gui_button("Clear Local Grasps")
+        # # Clear local grasps
+        # clear_local_grasp_button = server.add_gui_button("Clear Local Grasps")
 
-        @clear_local_grasp_button.on_click
-        def _(_) -> None:
-            nonlocal local_object_grasp_poses, local_object_grasp_poses_visual, local_object_grasp_scores
+        # @clear_local_grasp_button.on_click
+        # def _(_) -> None:
+        #     nonlocal local_object_grasp_poses, local_object_grasp_poses_visual, local_object_grasp_scores
 
-            for i in range(len(local_object_grasp_poses_visual)):
-                pose = local_object_grasp_poses_visual[i]
-                rotation_matrix = pose[:3, :3]
-                translation = pose[:3, 3]
-                server.add_frame(
-                    name=f'/grasps_{i}',
-                    wxyz=tf.SO3.from_matrix(rotation_matrix).wxyz,
-                    position=translation,
-                    show_axes=False,
-                    visible=False
-                )
+        #     for i in range(len(local_object_grasp_poses_visual)):
+        #         pose = local_object_grasp_poses_visual[i]
+        #         rotation_matrix = pose[:3, :3]
+        #         translation = pose[:3, 3]
+        #         server.add_frame(
+        #             name=f'/grasps_{i}',
+        #             wxyz=tf.SO3.from_matrix(rotation_matrix).wxyz,
+        #             position=translation,
+        #             show_axes=False,
+        #             visible=False
+        #         )
 
-            local_object_grasp_poses = []
-            local_object_grasp_poses_visual = []
-            local_object_grasp_scores = []
+        #     local_object_grasp_poses = []
+        #     local_object_grasp_poses_visual = []
+        #     local_object_grasp_scores = []
 
 
 
